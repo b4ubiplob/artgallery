@@ -50,8 +50,8 @@ public class Painting implements Serializable {
 	private List<Comment> comments;
 
 	//bi-directional many-to-one association to Dimension
-	@OneToMany(mappedBy="painting")
-	private List<Dimension> dimensions;
+	@ManyToOne
+	private Dimension dimension;
 
 	//bi-directional many-to-many association to Gallery
 	@ManyToMany
@@ -145,26 +145,12 @@ public class Painting implements Serializable {
 		return comment;
 	}
 
-	public List<Dimension> getDimensions() {
-		return this.dimensions;
+	public Dimension getDimension() {
+		return this.dimension;
 	}
 
-	public void setDimensions(List<Dimension> dimensions) {
-		this.dimensions = dimensions;
-	}
-
-	public Dimension addDimension(Dimension dimension) {
-		getDimensions().add(dimension);
-		dimension.setPainting(this);
-
-		return dimension;
-	}
-
-	public Dimension removeDimension(Dimension dimension) {
-		getDimensions().remove(dimension);
-		dimension.setPainting(null);
-
-		return dimension;
+	public void setDimension(Dimension dimension) {
+		this.dimension = dimension;
 	}
 
 	public List<Gallery> getGalleries() {

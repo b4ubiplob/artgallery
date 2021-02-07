@@ -31,8 +31,8 @@ public class PaintingService {
 	@Autowired
 	private ImageFileRepository imageFileRepository;
 
-//	@Autowired
-//	private DimensionRepository dimensionRepository;
+	@Autowired
+	private DimensionRepository dimensionRepository;
 
 	public PaintingTO createPainting(PaintingTO paintingTO) {
 
@@ -45,9 +45,8 @@ public class PaintingService {
 		painting.setCreatedOn(date);
 		painting.setLastUpdatedOn(date);
 		painting.setId(RandomIDGenerator.getRandomId());
-		List<Gallery> galleries = new ArrayList<>();
-		paintingTO.getGalleryIds().forEach(id -> galleries.add(galleryRepository.findById(id).get()));
-		painting.setGalleries(galleries);
+		
+		painting.setGalleries(getGalleries(paintingTO));
 
 		ImageFile imageFile = new ImageFile();
 		imageFile.setId(RandomIDGenerator.getRandomId());
@@ -57,10 +56,8 @@ public class PaintingService {
 		ImageFile savedFile = imageFileRepository.save(imageFile);
 		painting.setImageFile(savedFile);
 
-//		Dimension dimension = dimensionRepository.getOne(paintingTO.getDimensionId());
-//		List<Dimension> dimensions = new ArrayList<>();
-//		dimensions.add(dimension);
-//		painting.setDimensions(dimensions);
+		Dimension dimension = dimensionRepository.getOne(paintingTO.getDimensionId());
+		painting.setDimension(dimension);
 
 		Painting savedPainting = paintingRepository.saveAndFlush(painting);
 		return getPaintingTO(savedPainting);
@@ -70,11 +67,51 @@ public class PaintingService {
 		Optional<Painting> optional = paintingRepository.findByName(name);
 		return optional.isPresent();
 	}
+	
+	public PaintingTO getPainting(String id) {
+		Optional<Painting> optional = paintingRepository.findById(id);
+		if (optional.isPresent()) {
+			Painting painting = optional.get();
+			PaintingTO paintingTO = getPaintingTO(painting);
+			List<String> galleryIds = new ArrayList<>();
+			for (Gallery gallery : painting.getGalleries()) {
+				galleryIds.add(gallery.getId());
+			}
+			paintingTO.setGalleryIds(galleryIds);
+			paintingTO.setDimensionId(painting.getDimension().getId());
+			return paintingTO;
+		}
+		return null;
+	}
 
 	public List<PaintingTO> getAllPaintings() {
 		List<PaintingTO> paintingTOs = new ArrayList<>();
 		paintingRepository.findAll().forEach(painting -> paintingTOs.add(getPaintingTO(painting)));
 		return paintingTOs;
+	}
+	
+	public void deletePainting(String id) {
+		paintingRepository.deleteById(id);
+	}
+	
+	public PaintingTO updatePainting(String id, PaintingTO paintingTO) {
+		Optional<Painting> optional = paintingRepository.findById(id);
+		if (optional.isPresent()) {
+			Painting painting = optional.get();
+			getPainting(paintingTO, painting);
+			painting.setGalleries(getGalleries(paintingTO));
+			painting.setDimension(dimensionRepository.getOne(paintingTO.getDimensionId()));
+			Painting savedPainting = paintingRepository.save(painting);
+			return getPaintingTO(savedPainting);
+		}
+		return null;
+	}
+	
+	public List<Gallery> getGalleries(PaintingTO paintingTO) {
+		List<Gallery> galleries = new ArrayList<>();
+		paintingTO.getGalleryIds().forEach(id -> galleries.add(galleryRepository.findById(id).get()));
+		return galleries;
+
 	}
 
 	private PaintingTO getPaintingTO(Painting painting) {
@@ -84,14 +121,21 @@ public class PaintingService {
 		paintingTO.setId(painting.getId());
 		paintingTO.setName(painting.getName());
 		paintingTO.setUrl(painting.getUrl());
+		paintingTO.setBreadth(painting.getDimension().getBreadth());
+		paintingTO.setLength(painting.getDimension().getLength());
+		paintingTO.setUnit(painting.getDimension().getUnit());
 		return paintingTO;
 	}
-
-	private Painting getPainting(PaintingTO paintingTO) {
-		Painting painting = new Painting();
+	
+	private void getPainting(PaintingTO paintingTO, Painting painting) {
 		painting.setDescription(paintingTO.getDescription());
 		painting.setName(paintingTO.getName());
 		painting.setUrl(painting.getName().replace(" ", "_") + ".jpeg");
+	}
+	
+	private Painting getPainting(PaintingTO paintingTO) {
+		Painting painting = new Painting();
+		getPainting(paintingTO, painting);
 		return painting;
 	}
 

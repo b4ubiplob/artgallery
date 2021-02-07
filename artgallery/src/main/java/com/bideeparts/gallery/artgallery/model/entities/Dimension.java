@@ -1,8 +1,12 @@
 package com.bideeparts.gallery.artgallery.model.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
-import java.math.BigDecimal;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 
 /**
@@ -24,8 +28,8 @@ public class Dimension implements Serializable {
 	private String unit;
 
 	//bi-directional many-to-one association to Painting
-	@ManyToOne
-	private Painting painting;
+	@OneToMany(mappedBy="dimension")
+	private List<Painting> paintings;
 
 	public Dimension() {
 	}
@@ -62,12 +66,26 @@ public class Dimension implements Serializable {
 		this.unit = unit;
 	}
 
-	public Painting getPainting() {
-		return this.painting;
+	public List<Painting> getPaintings() {
+		return this.paintings;
 	}
 
-	public void setPainting(Painting painting) {
-		this.painting = painting;
+	public void setPaintings(List<Painting> paintings) {
+		this.paintings = paintings;
+	}
+
+	public Painting addPainting(Painting painting) {
+		getPaintings().add(painting);
+		painting.setDimension(this);
+
+		return painting;
+	}
+
+	public Painting removePainting(Painting painting) {
+		getPaintings().remove(painting);
+		painting.setDimension(null);
+
+		return painting;
 	}
 
 }

@@ -11,6 +11,9 @@ public class PaintingTO {
 	private String url;
 	private List<String> galleryIds;
 	private String dimensionId;
+	private double length;
+	private double breadth;
+	private String unit;
 
 	public String getName() {
 		return name;
@@ -66,6 +69,30 @@ public class PaintingTO {
 
 	public void setDimensionId(String dimensionId) {
 		this.dimensionId = dimensionId;
+	}
+
+	public double getLength() {
+		return length;
+	}
+
+	public void setLength(double length) {
+		this.length = length;
+	}
+
+	public double getBreadth() {
+		return breadth;
+	}
+
+	public void setBreadth(double breadth) {
+		this.breadth = breadth;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 
 

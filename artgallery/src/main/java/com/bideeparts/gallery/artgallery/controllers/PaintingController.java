@@ -5,9 +5,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,14 +31,14 @@ public class PaintingController {
 	public PaintingTO createPainting( @RequestParam("name") String name, 
 			@RequestParam("description") String description,
 			@RequestParam("content") MultipartFile file, 
-			@RequestParam("galleryIds") List<String> galleryIds
-//			@RequestParam("dimensionId") String dimensionId
+			@RequestParam("galleryIds") List<String> galleryIds,
+			@RequestParam("dimensionId") String dimensionId
 			) {
 		PaintingTO painting = new PaintingTO();
 		painting.setName(name);
 		painting.setDescription(description);
 		painting.setGalleryIds(galleryIds);
-		//painting.setDimensionId(dimensionId);
+		painting.setDimensionId(dimensionId);
 		try {
 			painting.setContent(file.getBytes());
 		} catch (IOException e) {
@@ -43,6 +46,21 @@ public class PaintingController {
 		}
 		return paintingService.createPainting(painting);
 
+	}
+	
+	@GetMapping(value="/{id}")
+	public PaintingTO getPainting(@PathVariable String id) {
+		return paintingService.getPainting(id);
+	}
+	
+	@PutMapping(value="/{id}")
+	public PaintingTO updatePainting(@PathVariable String id, @RequestBody PaintingTO paintingTO) {
+		return paintingService.updatePainting(id, paintingTO);
+	}
+	
+	@DeleteMapping(value = "/{id}")
+	public void deletePainting(@PathVariable String id) {
+		paintingService.deletePainting(id);
 	}
 
 	@GetMapping
