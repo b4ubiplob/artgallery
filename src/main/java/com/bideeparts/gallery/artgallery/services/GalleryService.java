@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.bideeparts.gallery.artgallery.model.entities.Gallery;
 import com.bideeparts.gallery.artgallery.model.to.GalleryTO;
+import com.bideeparts.gallery.artgallery.model.to.PaintingTO;
 import com.bideeparts.gallery.artgallery.repository.GalleryRepository;
 import com.bideeparts.gallery.artgallery.util.RandomIDGenerator;
 
@@ -22,6 +23,10 @@ public class GalleryService {
 	
 	@Autowired
 	private GalleryRepository galleryRepository;
+	
+	@Autowired
+	private PaintingService paintingService;
+	
 	
 	public List<GalleryTO> getAllGalleries() {
 		logger.info("getting all galleries from service");
@@ -76,6 +81,7 @@ public class GalleryService {
 	private Gallery getGallery(GalleryTO galleryTO, Gallery gallery) {
 		gallery.setName(galleryTO.getName());
 		gallery.setDescription(galleryTO.getDescription());
+		gallery.setCoverImageUrl(galleryTO.getCoverImageUrl());
 		return gallery;
 	}
 	
@@ -84,7 +90,12 @@ public class GalleryService {
 		galleryTO.setDescription(gallery.getDescription());
 		galleryTO.setId(gallery.getId());
 		galleryTO.setName(gallery.getName());
+		galleryTO.setCoverImageUrl(gallery.getCoverImageUrl());
 		return galleryTO;
+	}
+
+	public List<PaintingTO> getPaintingsOfGallery(String id) {
+		return paintingService.getPaintingsOfGallery(id);
 	}
 
 }

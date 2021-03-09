@@ -147,4 +147,10 @@ public class PaintingService {
 		throw new IllegalArgumentException("Image with url not found " + url);
 	}
 
+	public List<PaintingTO> getPaintingsOfGallery(String galleryId) {
+		List<PaintingTO> paintingTOs = new ArrayList<>();
+		galleryRepository.getPaintingsOfGallery(galleryId).forEach(painting -> paintingTOs.add(getPaintingTO(painting)));
+		return paintingTOs;
+	}
+
 }

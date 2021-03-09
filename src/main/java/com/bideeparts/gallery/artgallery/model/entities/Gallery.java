@@ -25,6 +25,9 @@ public class Gallery implements Serializable {
 	private String description;
 
 	private String name;
+	
+	@Column(name = "cover_image_url")
+	private String coverImageUrl;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="updated_on")
@@ -83,6 +86,14 @@ public class Gallery implements Serializable {
 
 	public void setPaintings(List<Painting> paintings) {
 		this.paintings = paintings;
+	}
+
+	public String getCoverImageUrl() {
+		return coverImageUrl;
+	}
+
+	public void setCoverImageUrl(String coverImageUrl) {
+		this.coverImageUrl = coverImageUrl;
 	}
 
 }

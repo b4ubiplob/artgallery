@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bideeparts.gallery.artgallery.model.to.GalleryTO;
+import com.bideeparts.gallery.artgallery.model.to.PaintingTO;
 import com.bideeparts.gallery.artgallery.services.GalleryService;
 
 @RestController
@@ -33,11 +34,15 @@ public class GalleryController {
 		return galleryService.getAllGalleries();
 	}
 	
-	
 	@GetMapping(value = "/{id}")
 	public GalleryTO getGallery(@PathVariable String id) {
 		logger.info("getting a single gallery");
 		return galleryService.getGasllery(id);
+	}
+	
+	@GetMapping(value = "/{id}/paintings")
+	public List<PaintingTO> getPaintingsOfGallery(@PathVariable String id) {
+		return galleryService.getPaintingsOfGallery(id);
 	}
 	
 	@PostMapping
